@@ -1,54 +1,61 @@
 # Teleport
 
-Teleport is a personal and fully customisable cloud storage manager. Share files
-and clipboard content across devices seamlessly not compromising privacy, confidentiality
-and control over all shared data.
+Personal teleportation tool for files and clipboard content across personal devices.
 
 ## Overview
 
 Teleport is a project developed to handle file and clipboard sharing across multiple
-devices leveraging a remote machine used as storage. The concept is identical to
-that of a cloud provider, however by self-hosting your remote storage and using
-Teleport full control over all stored files is retained, which increases privacy,
-confidentiality and customisation of the service. In particular, one is able to
-chose the provider of their liking, the amount of storage they require, generally
-speaking at a lower per GiB price and with potentially also other features included
-(a personal VPS doesn't provide only storage).
+devices leveraging a remote machine used as temporary storage.
 
-A local `~/teleporter` directory will be used to store synchronised data (both downstream
-and upstream). As the name suggests, the directory will act as a teleport device,
-namely local [...].
+A local directory (by default `$HOME/teleporter/`) will act as a teleportation device:
+any file placed inside this directory will be teleported to a remote machine
+(by default under `$HOME/teleporter/`) for future retrieval. Other devices can the
+teleport the files locally from the remote machine with a simple command.
+
+The same synchronisation operations can be performed also for clipboard content:
+copied data can be shared easily across devices thanks to teleportation/.
 
 Some of the intended uses of Teleport are:
 
 - File synchronisation across devices / file hand-off
-- File sharing
-- Clipboard synchronisation for data sharing
-- Remote backup of File
+- File sharing, while retaining full control and privacy
+- Clipboard synchronisation for data sharing (password, api-keys, urls, ...)
 
 ## Requirements
 
-Teleport is fully written in Python and Bash hence is fully compatible out of the
-box with Unix/Linux operating systems. The compatibility can be extended on Windows
-using WSL.
+Teleport is fully written in shell hence is fully compatible out of the box with
+Unix/Linux operating systems. The compatibility can be extended on Windows using
+WSL.
 
 There are two possible ways to use Teleport:
 
 - **VPS:** this is the preferred use but requires access to a remote server. PORT
-22 for ssh/scp opeations must be
-open and it is suggested to handle connections only via ssh key pairs.
-- **LAN:** Teleport may also be used on any local machine with a port 22 open for
-ssh/scp operations within a local area network, however usage will be restricted
-and not ubiquitous.
+22 for ssh/scp operations must be open and it is suggested to handle connections
+only via ssh key pairs.
+- **LAN:** Teleport may also be used between machines inside the same local area
+network, provided the destination machine is hosting an ssh server with port 22
+open. Note that in this case usage will be limited only to the local network and
+will not be ubiquitous.
 
 ## Installation
 
-To install Teleport simply clone this repository on your local machine and install
-`xclip` if you also want clipboard synchronisation.
+To install Teleport simply clone this repository on your local machine.
+
+**Optional but suggested:** in order to be able to also teleport clipboard content
+ensure one among the following utilities is available locally: `xclip`, `wl-paste`,
+`pbpaste`.
+
+Finally, it is highly recommended to add an alias to the local profile:
+
+`alias tp=PATH_TO_LOCAL_REPOSITORY/teleport.sh`
 
 ## Configuration
 
-Prior to usage Teleport should be configured. A [...].
+Prior to usage Teleport should be configured. In order to do so either copy the
+default configuration template `teleporter.default.conf` under `$HOME/.config/teleporter.conf`
+or run `./teleporter.sh` to automatically generate the configuration file template
+under `$HOME/.config/teleporter.conf`. In both cases it is necessary to manually
+edit the value of the `REMOTE_MACHINE` variable prior to usage.
 
 ## Usage
 
@@ -70,5 +77,5 @@ has been moved to the destination teleporter. In order to avoid this behaviour
 and keep a copy of the data in the origin teleporter use `./teleport.sh away clone`
 and `./teleport.sh here clone` instead.
 
-`./teleport.py away` operations can be performed in sequence in order to upload
+`./teleport.sh away` operations can be performed in sequence in order to upload
 multiple files to the remote teleporter.
