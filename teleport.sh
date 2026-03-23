@@ -30,7 +30,8 @@ elif [[ "$#" == 1 && "$1" == "help" ]]; then
   echo ""
   exit 0
 elif [[ "$#" == 1 && \
-  ("$1" != "away" && "$1" != "here" && "$1" != "copy" && "$1" != "paste") ]]; then
+  ("$1" != "away" && "$1" != "here" && "$1" != "copy" && \
+  "$1" != "paste" && "$1" != "limbo" && "$1" != "void") ]]; then
   echo ""
   echo "ERROR: unknown teleportation argument \"$1\" supplied"
   echo ""
@@ -79,7 +80,7 @@ fi
 
 
 # If teleporting, handle local / remote teleporter locations
-if [[ "$1" == "away" || "$1" == "here" ]]; then
+if [[ "$1" == "away" || "$1" == "here" || "$1" == "limbo" || "$1" == "void" ]]; then
   # Handle local teleporter location
   if [[ "$ALWAYS_REQUEST_LOCAL_TELEPORTER_PATH" == true ]]; then
     echo "  >>> Insert local teleporter path:"
@@ -137,9 +138,32 @@ fi
 
 
 # Teleporting operations
-if [[ "$1" == "away" ]]; then
+if [[ "$1" == "limbo" ]]; then
   echo ""
-  echo "Operning connection to remote portal..."
+  echo "Opening connection to remote teleporter..."
+  echo ""
+  ssh "$REMOTE_MACHINE" \
+    "echo '  >> Files in remote teleporter:' &&
+    ls -1A $TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME &&
+    echo -e '\n  >> Remote clipboard content:' &&
+    cat $CLIPBOARD_REMOTE_PATH/$CLIPBOARD_NAME
+    echo ''"
+  echo ""
+  echo "Closing connection with remote teleporter"
+  echo ""
+elif [[ "$1" == "void" ]]; then
+  echo ""
+  echo "Opening connection to remote teleporter..."
+  echo ""
+  ssh "$REMOTE_MACHINE" \
+    "rm -rf $TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME/* &&
+    echo '' > $CLIPBOARD_REMOTE_PATH/$CLIPBOARD_NAME"
+  echo "All remote data voided irreversively"
+  echo "Closing connection with remote teleporter"
+  echo ""
+elif [[ "$1" == "away" ]]; then
+  echo ""
+  echo "Operning connection to remote teleporter..."
   echo ""
   scp -r "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME"/* "$REMOTE_MACHINE:$TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME"/
   echo ""
@@ -153,7 +177,7 @@ if [[ "$1" == "away" ]]; then
   echo ""
 elif [[ "$1" == "here" ]]; then
   echo ""
-  echo "Opening connection to remote portal..."
+  echo "Opening connection to remote teleporter..."
   echo ""
   scp -r "$REMOTE_MACHINE:$TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME"/* "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME"/
   echo ""
