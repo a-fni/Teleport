@@ -2,7 +2,7 @@
 set -eou pipefail
 
 # Reading configuration file
-source teleporter.conf
+source ./teleporter.conf
 
 # Check if local teleporter exists
 if [[ ! -d "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME" ]]; then
@@ -76,8 +76,7 @@ elif [[ "$1" == "away" ]]; then
   elif [[ "$2" == "clone" ]]; then
     echo "Clonation completed!"
   fi
-  echo ""
-  echo "Closing connectin with remote teleporter"
+  echo "Closing connection with remote teleporter"
   echo ""
 elif [[ "$1" == "here" ]]; then
   echo ""
@@ -90,7 +89,6 @@ elif [[ "$1" == "here" ]]; then
   elif [[ "$2" == "clone" ]]; then
     echo "Clonation completed!"
   fi
-  echo ""
   echo "Closing connection with remote teleporter"
   echo ""
 elif [[ "$1" == "copy" ]]; then
