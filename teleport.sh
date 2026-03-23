@@ -1,5 +1,3 @@
-#!/usr/bin/bash
-
 # Fail whole script in case of errors
 set -eou pipefail
 
@@ -7,10 +5,10 @@ set -eou pipefail
 source teleporter.conf
 
 # Check if local teleporter exists
-if [[ ! -d "$TELEPORTER_PATH/$TELEPORTER_NAME" ]]; then
+if [[ ! -d "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME" ]]; then
   echo "Local teleporter does not exist, nothing to teleport."
   echo "Creating an empty one for next teleportation"
-  mkdir "$TELEPORTER_PATH/$TELEPORTER_NAME"
+  mkdir "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME"
   exit 1
 fi
 
@@ -65,12 +63,12 @@ elif [[ "$#" == 2 && "$2" != "clone" ]]; then
   echo "$USAGE"
   echo ""
 elif [[ "$1" == "away" ]]; then
-  echo ""
-  echo "Operning connection with remote teleporter..."
-  echo ""
-  scp -r "$TELEPORTER_PATH/$TELEPORTER_NAME"/* "$REMOTE_MACHINE:$TELEPORTER_PATH/$TELEPORTER_NAME"/
+  scp -r "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME"/* "$REMOTE_MACHINE:$TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME"/
   if [[ "$#" == 1 ]]; then
-    rm -rf "$TELEPORTER_PATH/$TELEPORTER_NAME"/*
+    rm -rf "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME"/*
+    #mkdir -p "$TELEPORTER_PATH/.teleported"
+    #rm -rf "$TELEPORTER_PATH/.teleported"/*
+    #mv "$TELEPORTER_PATH/$TELEPORTER_NAME"/* "$TELEPORTER_PATH/.teleported"/
     echo "Teleportation completed!"
   elif [[ "$2" == "clone" ]]; then
     echo "Clonation completed!"
@@ -79,12 +77,9 @@ elif [[ "$1" == "away" ]]; then
   echo "Closing connectin with remote teleporter"
   echo ""
 elif [[ "$1" == "here" ]]; then
-  echo ""
-  echo "Operning connectio with remote teleporter..."
-  echo ""
-  scp -r "$REMOTE_MACHINE:$TELEPORTER_PATH/$TELEPORTER_NAME"/* "$TELEPORTER_PATH/$TELEPORTER_NAME"/
+  scp -r "$REMOTE_MACHINE:$TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME"/* "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME"/
   if [[ "$#" == 1 ]]; then
-    ssh "$REMOTE_MACHINE" "rm -rf $TELEPORTER_PATH/$TELEPORTER_NAME/*"
+    ssh "$REMOTE_MACHINE" "rm -rf $TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME/*"
     echo "Teleportation completed!"
   elif [[ "$2" == "clone" ]]; then
     echo "Clonation completed!"
@@ -93,11 +88,11 @@ elif [[ "$1" == "here" ]]; then
   echo "Closing connection with remote teleporter"
   echo ""
 elif [[ "$1" == "copy" ]]; then
-  scp "$REMOTE_MACHINE:$CLIPBOARD_PATH/$CLIPBOARD_NAME" "$CLIPBOARD_PATH/$CLIPBOARD_NAME"
-  cat "$CLIPBOARD_PATH/$CLIPBOARD_NAME" | clipcopy
+  scp "$REMOTE_MACHINE:$CLIPBOARD_REMOTE_PATH/$CLIPBOARD_NAME" "$CLIPBOARD_LOCAL_PATH/$CLIPBOARD_NAME"
+  cat "$CLIPBOARD_LOCAL_PATH/$CLIPBOARD_NAME" | clipcopy
 elif [[ "$1" == "paste" ]]; then
-  clippaste > "$CLIPBOARD_PATH/$CLIPBOARD_NAME"
-  scp "$CLIPBOARD_PATH/$CLIPBOARD_NAME" "$REMOTE_MACHINE:$CLIPBOARD_PATH/$CLIPBOARD_NAME"
+  clippaste > "$CLIPBOARD_LOCAL_PATH/$CLIPBOARD_NAME"
+  scp "$CLIPBOARD_LOCAL_PATH/$CLIPBOARD_NAME" "$REMOTE_MACHINE:$CLIPBOARD_REMOTE_PATH/$CLIPBOARD_NAME"
 else
   echo ""
   echo "ERROR: unknown teleportation argument \"$1\" supplied"
