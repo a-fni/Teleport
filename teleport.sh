@@ -15,6 +15,7 @@ if [[ ! -d "$TELEPORTER_PATH/$TELEPORTER_NAME" ]]; then
 fi
 
 # Usage string for documentation purtposes
+PROLOGUE="== Teleport =="
 USAGE="./teleport.sh away|here|copy|paste [clone]"
 
 
@@ -44,29 +45,43 @@ clippaste() {
 }
 
 
-echo "Connecting to remote portal..."
-
 # Teleporting operations
 if [[ "$#" == 0 ]]; then
-  echo "No arguments supplied"
+  echo ""
+  echo "ERROR: no teleportation arguments supplied"
+  echo ""
   echo "$USAGE"
+  echo ""
 elif [[ "$#" == 1 && "$1" == "help" ]]; then
+  echo ""
+  echo "$PROLOGUE"
+  echo ""
   echo "$USAGE"
+  echo ""
 elif [[ "$#" == 2 && "$2" != "clone" ]]; then
-  echo "Unknown argument $2 passed."
+  echo ""
+  echo "ERROR: unknown teleportation argument \"$2\" supplied"
+  echo ""
   echo "$USAGE"
+  echo ""
 elif [[ "$1" == "away" ]]; then
+  echo ""
+  echo "Operning connection with remote teleporter..."
+  echo ""
   scp -r "$TELEPORTER_PATH/$TELEPORTER_NAME"/* "$REMOTE_MACHINE:$TELEPORTER_PATH/$TELEPORTER_NAME"/
   if [[ "$#" == 1 ]]; then
     rm -rf "$TELEPORTER_PATH/$TELEPORTER_NAME"/*
-    #mkdir -p "$TELEPORTER_PATH/.teleported"
-    #rm -rf "$TELEPORTER_PATH/.teleported"/*
-    #mv "$TELEPORTER_PATH/$TELEPORTER_NAME"/* "$TELEPORTER_PATH/.teleported"/
     echo "Teleportation completed!"
   elif [[ "$2" == "clone" ]]; then
     echo "Clonation completed!"
   fi
+  echo ""
+  echo "Closing connectin with remote teleporter"
+  echo ""
 elif [[ "$1" == "here" ]]; then
+  echo ""
+  echo "Operning connectio with remote teleporter..."
+  echo ""
   scp -r "$REMOTE_MACHINE:$TELEPORTER_PATH/$TELEPORTER_NAME"/* "$TELEPORTER_PATH/$TELEPORTER_NAME"/
   if [[ "$#" == 1 ]]; then
     ssh "$REMOTE_MACHINE" "rm -rf $TELEPORTER_PATH/$TELEPORTER_NAME/*"
@@ -74,6 +89,9 @@ elif [[ "$1" == "here" ]]; then
   elif [[ "$2" == "clone" ]]; then
     echo "Clonation completed!"
   fi
+  echo ""
+  echo "Closing connection with remote teleporter"
+  echo ""
 elif [[ "$1" == "copy" ]]; then
   scp "$REMOTE_MACHINE:$CLIPBOARD_PATH/$CLIPBOARD_NAME" "$CLIPBOARD_PATH/$CLIPBOARD_NAME"
   cat "$CLIPBOARD_PATH/$CLIPBOARD_NAME" | clipcopy
@@ -81,7 +99,10 @@ elif [[ "$1" == "paste" ]]; then
   clippaste > "$CLIPBOARD_PATH/$CLIPBOARD_NAME"
   scp "$CLIPBOARD_PATH/$CLIPBOARD_NAME" "$REMOTE_MACHINE:$CLIPBOARD_PATH/$CLIPBOARD_NAME"
 else
-  echo "Unknown argument $1 passed."
+  echo ""
+  echo "ERROR: unknown teleportation argument \"$1\" supplied"
+  echo ""
   echo "$USAGE"
+  echo ""
 fi
 
