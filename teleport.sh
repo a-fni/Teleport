@@ -63,6 +63,9 @@ elif [[ "$#" == 2 && "$2" != "clone" ]]; then
   echo "$USAGE"
   echo ""
 elif [[ "$1" == "away" ]]; then
+  echo ""
+  echo "Operning connection to remote portal..."
+  echo ""
   scp -r "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME"/* "$REMOTE_MACHINE:$TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME"/
   if [[ "$#" == 1 ]]; then
     rm -rf "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME"/*
@@ -77,6 +80,9 @@ elif [[ "$1" == "away" ]]; then
   echo "Closing connectin with remote teleporter"
   echo ""
 elif [[ "$1" == "here" ]]; then
+  echo ""
+  echo "Opening connection to remote portal..."
+  echo ""
   scp -r "$REMOTE_MACHINE:$TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME"/* "$TELEPORTER_LOCAL_PATH/$TELEPORTER_NAME"/
   if [[ "$#" == 1 ]]; then
     ssh "$REMOTE_MACHINE" "rm -rf $TELEPORTER_REMOTE_PATH/$TELEPORTER_NAME/*"
