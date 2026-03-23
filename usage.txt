@@ -1,0 +1,10 @@
+  ./teleport.sh away|here|copy|paste [clone]
+  
+  USAGE:
+    away: teleports files from the local teleporter to the remote teleporter
+    here: teleports files from the remote teleporter to the local teleporter
+    copy: teleports content from the remote teleporter to the clipboard
+    paste: teleports content of the clipboard to the remote teleporter
+
+  OPTIONS:
+    clone: after teleportation keeps a copy of the files in the origin teleporter
